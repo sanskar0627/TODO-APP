@@ -15,10 +15,11 @@ app.use(cors());
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-mongoose.connect(process.env.MONGO_URL)
+if (process.env.NODE_ENV !== "test") {
+  mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
-
+}
 
 app.post("/signup", async (req, res) => {
     const { email, password, name } = req.body;
@@ -108,6 +109,11 @@ app.delete("/todo/:id", auth, async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
+if (require.main === module) {
+  app.listen(3000, () => {
     console.log("🚀 Server running on http://localhost:3000");
-});
+  });
+}
+
+module.exports = app; 
+
