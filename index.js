@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
+
 
 const { UserModel, TodoModel } = require("./db");
 require("dotenv").config();
@@ -12,6 +15,7 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -20,7 +24,35 @@ if (process.env.NODE_ENV !== "test") {
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
-
+/**
+ * @swagger
+ * /signup:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - name
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User signed up successfully
+ *       400:
+ *         description: User already exists
+ */
 app.post("/signup", async (req, res) => {
     const { email, password, name } = req.body;
 
@@ -33,6 +65,32 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /signin:
+ *   post:
+ *     summary: Sign in a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Signed in successfully
+ *       403:
+ *         description: Incorrect credentials or user not found
+ */
 
 app.post("/signin", async (req, res) => {
     const { email, password } = req.body;
@@ -63,7 +121,31 @@ function auth(req, res, next) {
     }
 }
 
-
+/**
+ * @swagger
+ * /todo:
+ *   post:
+ *     summary: Create a new todo
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Todo created
+ *       403:
+ *         description: Unauthorized
+ */
 app.post("/todo", auth, async (req, res) => {
     const { title } = req.body;
     const userId = req.userId;
@@ -72,12 +154,56 @@ app.post("/todo", auth, async (req, res) => {
     res.status(201).json({ message: "Todo created", todo });
 });
 
-
+/**
+ * @swagger
+ * /todos:
+ *   get:
+ *     summary: Get all todos for the logged-in user
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of todos
+ *       403:
+ *         description: Unauthorized
+ */
 app.get("/todos", auth, async (req, res) => {
     const todos = await TodoModel.find({ userId: req.userId });
     res.status(200).json({ todos });
 });
-
+/**
+ * @swagger
+ * /todo/{id}:
+ *   put:
+ *     summary: Update a todo by ID
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The todo ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               done:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Todo updated
+ *       404:
+ *         description: Todo not found
+ */
 
 app.put("/todo/:id", auth, async (req, res) => {
     const { id } = req.params;
@@ -96,7 +222,27 @@ app.put("/todo/:id", auth, async (req, res) => {
     }
 });
 
-
+/**
+ * @swagger
+ * /todo/{id}:
+ *   delete:
+ *     summary: Delete a todo by ID
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The todo ID
+ *     responses:
+ *       200:
+ *         description: Todo deleted
+ *       404:
+ *         description: Todo not found
+ */
 app.delete("/todo/:id", auth, async (req, res) => {
     const { id } = req.params;
 
