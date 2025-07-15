@@ -1,4 +1,4 @@
-# 📝 TODO-APP — Full Stack Project (Keploy Task 2)
+# 📝 TODO-APP — Full Stack Project (Keploy Task 4)
 
 A full-stack TODO Application with user authentication, built using **Node.js**, **Express**, **MongoDB**, and a simple **HTML/CSS/JS frontend**. Users can sign up, sign in, create, read, update, and delete their todos — all backed by a secure JWT-authenticated API.
 
@@ -12,9 +12,17 @@ A full-stack TODO Application with user authentication, built using **Node.js**,
 - **Backend**: Node.js, Express.js, MongoDB, Mongoose  
 - **Frontend**: HTML, CSS, JavaScript  
 - **Authentication**: JWT (JSON Web Token)  
-- **Testing**: Jest, Supertest, mongodb-memory-server  
+- **Testing**: Jest, Supertest, mongodb-memory-server  ,Swagger for API Docs, Keploy for API Test Recording
 
 ---
+## ✅ Keploy Integration (Day 4 - Fellowship)
+
+### Option 1: Using Chrome Extension (Quickest)
+1. Load the [Keploy Chrome Extension](https://github.com/keploy/extension)
+2. Start your app: `node index.js`
+3. Open the extension → Click **"Record API Calls"**
+4. Make API requests (e.g., using Swagger or Postman)
+5. Stop Recording → Click **"Generate Tests"**
 
 ## 🚀 Getting Started (Run Locally)
 
@@ -87,7 +95,10 @@ npm test
 
 ## 📸 Screenshots
 
-![image](https://github.com/user-attachments/assets/6bbdb6de-21b1-4af8-bc5a-b6a7cf282daa)
+<img width="1644" height="947" alt="image" src="https://github.com/user-attachments/assets/0018542c-1271-4d67-b630-ee01927cc5bc" />
+<img width="1654" height="940" alt="image" src="https://github.com/user-attachments/assets/9497a4b4-f558-4fc9-8a80-d9bf70d8f2f4" />
+<img width="1652" height="940" alt="image" src="https://github.com/user-attachments/assets/e5ffe6bf-3f0b-4393-8202-582a7c392ecd" />
+
 
 
 ---
